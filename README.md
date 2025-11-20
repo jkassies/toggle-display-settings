@@ -1,6 +1,6 @@
 # toggle-display-settings
 Create a shortcut in Win11 to quickly toggle display settings [relative positions] between sitting and standing configuration. <br>
-I got sick of manually going into System > Display and manually dragging displays to rearrange
+I got sick of manually going into System > Display and dragging displays to rearrange
 
 update powershell
 ```powershell
