@@ -21,20 +21,20 @@ PS C:\Users\jon> Get-DisplayInfo
  --------- -----------      ------  ------- --------    ----                  --------------
          1 DELL U2412M        True    False -3840 1365  1920x1200@60 Hz                  DVI
          2 DELL U2412M        True    False -1920 1365  1920x1200@60 Hz          DisplayPort
-         3 PHL BDM3270        True     True 0 0         2560x1440@60 Hz          DisplayPort
-         4 S27B350            True    False -1920 285   1920x1080@59.9400...            HDMI
+         3 LS37D80xU          True     True 0 0         3840x2160@60 Hz          DisplayPort
+         4 PHL BDM3270        True    False -2561 285   2560x1440@60 Hz                 HDMI
 
 
-PS C:\Users\jon> # configure the sitting display settings manually
+PS C:\Users\jon> # configure the sitting display settings manually (Samsung Viewfinity 37" 4K = LS37D80xU)
 PS C:\Users\jon> Get-DisplayConfig | Export-Clixml $home\SittingDisplayProfile.xml
 PS C:\Users\jon> Get-DisplayInfo
 
  DisplayId DisplayName      Active  Primary Position    Mode                  ConnectionType
  --------- -----------      ------  ------- --------    ----                  --------------
-         1 DELL U2412M        True    False -3840 1     1920x1200@60 Hz                  DVI
-         2 DELL U2412M        True    False -1920 1     1920x1200@60 Hz          DisplayPort
-         3 PHL BDM3270        True     True 0 0         2560x1440@60 Hz          DisplayPort
-         4 S27B350            True    False -1920 -1079 1920x1080@59.9400...            HDMI
+         1 DELL U2412M        True    False -3840 773   1920x1200@60 Hz                  DVI
+         2 DELL U2412M        True    False -1920 773   1920x1200@60 Hz          DisplayPort
+         3 LS37D80xU          True     True 0 0         3840x2160@60 Hz          DisplayPort
+         4 PHL BDM3270        True    False -2561 -667  2560x1440@60 Hz                 HDMI
 
 
 PS C:\Users\jon> Import-Module DisplayConfig
