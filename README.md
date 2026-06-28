@@ -55,6 +55,78 @@ pwsh.exe -ExecutionPolicy Bypass -WindowStyle Hidden -File "C:\Users\jon\Toggle-
 
 3. Name it "Toggle Display Mode".
 
+### RDP screen saver secure checkbox
+
+Windows stores the screen saver setting "On resume, display logon screen" in:
+
+```powershell
+HKCU:\Control Panel\Desktop\ScreenSaverIsSecure
+```
+
+`0` means unchecked. `1` means checked.
+
+This repo includes a setup script for this behavior:
+
+```text
+RDP login / reconnect -> checkbox OFF
+Local login / unlock  -> checkbox ON
+```
+
+It only changes `ScreenSaverIsSecure`. It does not change the screen saver, timeout, sleep, or power settings.
+
+Install the scheduled tasks:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-RdpScreenSaverSecure.ps1
+```
+
+The installer copies the runner to:
+
+```powershell
+$env:LOCALAPPDATA\RdpScreenSaverSecure\Set-ScreenSaverSecure.ps1
+```
+
+It creates these scheduled tasks under `Task Scheduler Library\RdpScreenSaverSecure`:
+
+- `RDP login sets screen saver secure OFF`
+- `Local login sets screen saver secure ON`
+- `Logon unlock applies correct screen saver secure state`
+
+Verify the current value:
+
+```powershell
+Get-ItemProperty 'HKCU:\Control Panel\Desktop' |
+    Select-Object ScreenSaverIsSecure
+```
+
+Manual controls:
+
+```powershell
+& "$env:LOCALAPPDATA\RdpScreenSaverSecure\Set-ScreenSaverSecure.ps1" -Mode Off
+& "$env:LOCALAPPDATA\RdpScreenSaverSecure\Set-ScreenSaverSecure.ps1" -Mode On
+& "$env:LOCALAPPDATA\RdpScreenSaverSecure\Set-ScreenSaverSecure.ps1" -Mode Auto
+```
+
+Logs are written to:
+
+```powershell
+$env:LOCALAPPDATA\RdpScreenSaverSecure\events.log
+```
+
+Remove the setup:
+
+```powershell
+Unregister-ScheduledTask -TaskPath '\RdpScreenSaverSecure\' -TaskName 'RDP login sets screen saver secure OFF' -Confirm:$false
+Unregister-ScheduledTask -TaskPath '\RdpScreenSaverSecure\' -TaskName 'Local login sets screen saver secure ON' -Confirm:$false
+Unregister-ScheduledTask -TaskPath '\RdpScreenSaverSecure\' -TaskName 'Logon unlock applies correct screen saver secure state' -Confirm:$false
+
+$Service = New-Object -ComObject Schedule.Service
+$Service.Connect()
+$Service.GetFolder('\').DeleteFolder('RdpScreenSaverSecure', 0)
+
+Remove-Item "$env:LOCALAPPDATA\RdpScreenSaverSecure" -Recurse -Force
+```
+
 
 ### Gemini prompt (for reference)
 ```
