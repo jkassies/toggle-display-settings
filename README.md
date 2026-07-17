@@ -86,6 +86,8 @@ The installer copies the runner to:
 $env:LOCALAPPDATA\RdpScreenSaverSecure\Set-ScreenSaverSecure.ps1
 ```
 
+Scheduled runs use the windowless Windows Script Host, so no PowerShell or Command Prompt window should appear at sign-in, unlock, or reconnect.
+
 It creates these scheduled tasks under `Task Scheduler Library\RdpScreenSaverSecure`:
 
 - `RDP login sets screen saver secure OFF`

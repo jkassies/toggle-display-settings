@@ -14,8 +14,9 @@ $ErrorActionPreference = 'Stop'
 
 $SwitcherSource = Join-Path $PSScriptRoot 'Set-ScreenSaverSecure.ps1'
 $ModuleSource = Join-Path $PSScriptRoot 'RdpScreenSaverSecure.psm1'
+$LauncherSource = Join-Path $PSScriptRoot 'Run-ScreenSaverSecureHidden.vbs'
 
-foreach ($Source in @($SwitcherSource, $ModuleSource)) {
+foreach ($Source in @($SwitcherSource, $ModuleSource, $LauncherSource)) {
     if (-not (Test-Path -LiteralPath $Source)) {
         throw "Required file not found: $Source"
     }
@@ -25,16 +26,19 @@ New-Item -ItemType Directory -Path $Root -Force | Out-Null
 
 $SwitcherPath = Join-Path $Root 'Set-ScreenSaverSecure.ps1'
 $ModulePath = Join-Path $Root 'RdpScreenSaverSecure.psm1'
+$LauncherPath = Join-Path $Root 'Run-ScreenSaverSecureHidden.vbs'
 $LogPath = Join-Path $Root 'events.log'
 
 Copy-Item -LiteralPath $SwitcherSource -Destination $SwitcherPath -Force
 Copy-Item -LiteralPath $ModuleSource -Destination $ModulePath -Force
+Copy-Item -LiteralPath $LauncherSource -Destination $LauncherPath -Force
 
 $TaskFolderName = 'RdpScreenSaverSecure'
 $TaskFolderPath = "\$TaskFolderName"
 
 $UserId = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
 $PowerShellExe = "$env:windir\System32\WindowsPowerShell\v1.0\powershell.exe"
+$WScriptExe = "$env:windir\System32\wscript.exe"
 
 $TASK_ACTION_EXEC = 0
 $TASK_CREATE_OR_UPDATE = 6
@@ -106,8 +110,8 @@ function Register-RdpScreenSaverSecureTask {
     }
 
     $Action = $Task.Actions.Create($TASK_ACTION_EXEC)
-    $Action.Path = $PowerShellExe
-    $Action.Arguments = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$SwitcherPath`" -Mode $Mode"
+    $Action.Path = $WScriptExe
+    $Action.Arguments = "//B //NoLogo `"$LauncherPath`" `"$SwitcherPath`" `"$Mode`""
 
     $Folder.RegisterTaskDefinition(
         $Name,
